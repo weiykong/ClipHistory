@@ -18,9 +18,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: - Core objects
 
-    private var settings: AppSettings!
-    private var store:    ClipboardStore!
-    private var popup:    PopupWindowController!
+    private var settings:       AppSettings!
+    private var store:          ClipboardStore!
+    private var popup:          PopupWindowController!
+    private var updateChecker:  UpdateChecker!
 
     // MARK: - UI
 
@@ -42,9 +43,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
-        settings = AppSettings()
-        store    = ClipboardStore(maxCount: settings.maxItems)
-        popup    = PopupWindowController(store: store, settings: settings)
+        settings      = AppSettings()
+        store         = ClipboardStore(maxCount: settings.maxItems)
+        updateChecker = UpdateChecker()
+        popup         = PopupWindowController(store: store, settings: settings, updateChecker: updateChecker)
 
         // Wire setting-change callbacks
         settings.onHotkeyChanged   = { [weak self] _ in self?.reRegisterHotkey() }
@@ -55,6 +57,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         startClipboardMonitoring()
         requestAccessibilityAndRegisterHotkey()
         showOnboardingIfNeeded()
+
+        // Check for updates on every launch
+        updateChecker.checkForUpdate()
     }
 
     func applicationWillTerminate(_ notification: Notification) {

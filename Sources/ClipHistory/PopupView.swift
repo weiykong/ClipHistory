@@ -1,11 +1,12 @@
 import SwiftUI
 
 struct PopupView: View {
-    let store:     ClipboardStore
+    let store:         ClipboardStore
     @Bindable var settings: AppSettings
     @Bindable var state: PopupState
-    let onSelect:  (ClipItem) -> Void
-    let onDismiss: () -> Void
+    let updateChecker: UpdateChecker
+    let onSelect:      (ClipItem) -> Void
+    let onDismiss:     () -> Void
 
     // Single source of truth for filtering — same call the window controller
     // uses, so selection indices always agree between view and key handling.
@@ -24,6 +25,9 @@ struct PopupView: View {
     var body: some View {
         VStack(spacing: 0) {
             header
+            if updateChecker.updateAvailable {
+                updateBanner
+            }
             itemList
                 .onContinuousHover { phase in
                     guard case .active(let pt) = phase else { return }
@@ -75,6 +79,12 @@ struct PopupView: View {
                                 endPoint: .bottomTrailing
                             )
                         )
+                    if updateChecker.updateAvailable {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 6, height: 6)
+                            .offset(x: -2, y: -1)
+                    }
                     Text(headerSubtitle)
                         .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundStyle(.secondary.opacity(0.5))
@@ -131,6 +141,36 @@ struct PopupView: View {
             return store.items.isEmpty ? "Ready to capture" : "No results"
         }
         return "\(filtered.count) item\(filtered.count == 1 ? "" : "s")"
+    }
+
+    // MARK: - Update banner
+
+    private var updateBanner: some View {
+        Button {
+            if let url = updateChecker.releaseURL {
+                NSWorkspace.shared.open(url)
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.down.circle.fill")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.green)
+                Text("v\(updateChecker.latestVersion ?? "") available")
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundStyle(.primary.opacity(0.8))
+                Spacer()
+                Text("Download")
+                    .font(.system(size: 10, weight: .black, design: .rounded))
+                    .foregroundStyle(.green)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .background(Color.green.opacity(0.1), in: Capsule())
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Color.green.opacity(0.06))
+        }
+        .buttonStyle(.plain)
     }
 
     private var searchField: some View {

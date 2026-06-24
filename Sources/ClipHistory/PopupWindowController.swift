@@ -3,18 +3,20 @@ import SwiftUI
 import CoreGraphics
 
 final class PopupWindowController {
-    private var panel:      NSPanel?
-    private let store:      ClipboardStore
-    private let settings:   AppSettings
+    private var panel:          NSPanel?
+    private let store:          ClipboardStore
+    private let settings:       AppSettings
+    private let updateChecker:  UpdateChecker
     private let popupState = PopupState()
 
     private var clickMonitor: Any?
     private var eventTap:     CFMachPort?
     private var tapSource:    CFRunLoopSource?
 
-    init(store: ClipboardStore, settings: AppSettings) {
-        self.store    = store
-        self.settings = settings
+    init(store: ClipboardStore, settings: AppSettings, updateChecker: UpdateChecker) {
+        self.store         = store
+        self.settings      = settings
+        self.updateChecker = updateChecker
     }
 
     // MARK: - Show / Hide
@@ -121,11 +123,12 @@ final class PopupWindowController {
         p.hasShadow          = false  // Shadow drawn via SwiftUI .shadow() modifier so it follows the rounded shape
 
         p.contentView = NSHostingView(rootView: PopupView(
-            store:     store,
-            settings:  settings,
-            state:     popupState,
-            onSelect:  { [weak self] item in self?.pasteItem(item) },
-            onDismiss: { [weak self] in self?.hide() }
+            store:         store,
+            settings:      settings,
+            state:         popupState,
+            updateChecker: updateChecker,
+            onSelect:      { [weak self] item in self?.pasteItem(item) },
+            onDismiss:     { [weak self] in self?.hide() }
         ))
         panel = p
     }
