@@ -54,7 +54,7 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("ClipHistory")
                     .font(.system(size: 22, weight: .bold, design: .rounded))
-                Text("Light. Private. Fast.")
+                Text("Light. Private. Fast. — v\(UpdateChecker.currentVersion)")
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary.opacity(0.8))
             }
