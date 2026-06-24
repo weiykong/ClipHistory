@@ -152,4 +152,4 @@ Please **open an issue first** before starting any large change so we can discus
 
 ## License
 
-[MIT](LICENSE) © 2026 Weiyuan Kong
+[MIT](LICENSE) © 2026 weiykong
