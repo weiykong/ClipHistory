@@ -121,6 +121,17 @@ struct SettingsView: View {
 
                 Divider().padding(.horizontal, 16).opacity(0.5)
 
+                SettingsRow(icon: "arrow.up.to.line",
+                            iconColor: .accentColor,
+                            label: "Remember Position",
+                            hint: "Reopen where you left off instead of the top.") {
+                    Toggle("", isOn: $settings.rememberScrollPosition)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                }
+
+                Divider().padding(.horizontal, 16).opacity(0.5)
+
                 SettingsRow(icon: "clock.fill",
                             iconColor: .secondary,
                             label: "Capacity",

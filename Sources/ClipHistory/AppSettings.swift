@@ -28,6 +28,12 @@ final class AppSettings {
         didSet { save() }
     }
 
+    /// When true, reopening the popup keeps the previous selection/scroll
+    /// position instead of jumping back to the newest clip at the top.
+    var rememberScrollPosition: Bool = false {
+        didSet { save() }
+    }
+
     /// Bundle IDs of apps whose clipboard changes are silently ignored.
     var excludedBundleIDs: Set<String> = [] {
         didSet { save() }
@@ -45,10 +51,11 @@ final class AppSettings {
     // MARK: - Persistence
 
     private enum Keys {
-        static let hotkey            = "hotkey"
-        static let maxItems          = "maxItems"
-        static let hideImages        = "hideImages"
-        static let excludedBundleIDs = "excludedBundleIDs"
+        static let hotkey                 = "hotkey"
+        static let maxItems               = "maxItems"
+        static let hideImages             = "hideImages"
+        static let rememberScrollPosition = "rememberScrollPosition"
+        static let excludedBundleIDs      = "excludedBundleIDs"
     }
 
     private func load() {
@@ -61,6 +68,7 @@ final class AppSettings {
         if n >= 5 { maxItems = n }
 
         hideImages = d.bool(forKey: Keys.hideImages)
+        rememberScrollPosition = d.bool(forKey: Keys.rememberScrollPosition)
         if let ids = d.stringArray(forKey: Keys.excludedBundleIDs) {
             excludedBundleIDs = Set(ids)
         }
@@ -75,8 +83,9 @@ final class AppSettings {
         if let data = try? JSONEncoder().encode(hotkey) {
             d.set(data, forKey: Keys.hotkey)
         }
-        d.set(maxItems,              forKey: Keys.maxItems)
-        d.set(hideImages,            forKey: Keys.hideImages)
+        d.set(maxItems,                 forKey: Keys.maxItems)
+        d.set(hideImages,               forKey: Keys.hideImages)
+        d.set(rememberScrollPosition,   forKey: Keys.rememberScrollPosition)
         d.set(Array(excludedBundleIDs), forKey: Keys.excludedBundleIDs)
     }
 

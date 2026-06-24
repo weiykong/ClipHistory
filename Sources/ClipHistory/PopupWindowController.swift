@@ -20,7 +20,13 @@ final class PopupWindowController {
     // MARK: - Show / Hide
 
     func show(near mouse: NSPoint) {
-        popupState.reset()
+        popupState.reset(keepSelection: settings.rememberScrollPosition)
+        // Clamp the remembered index in case clips were trimmed/added while
+        // the popup was closed, so it never points past the end of the list.
+        if settings.rememberScrollPosition {
+            let count = store.filtered(query: "", showImages: !settings.hideImages).count
+            popupState.selectedIndex = min(popupState.selectedIndex, max(0, count - 1))
+        }
 
         if panel == nil { buildPanel() }
         guard let panel else { return }

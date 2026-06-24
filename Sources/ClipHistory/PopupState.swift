@@ -10,9 +10,12 @@ final class PopupState {
     var searchText   = ""
     var selectedIndex = 0
 
-    func reset() {
-        showToken     = UUID()
-        searchText    = ""
-        selectedIndex = 0
+    /// Prepare for a fresh open. Search is always cleared (it's transient);
+    /// pass `keepSelection: true` to preserve the highlighted row so the list
+    /// reopens where the user left off instead of snapping to the top.
+    func reset(keepSelection: Bool = false) {
+        showToken  = UUID()
+        searchText = ""
+        if !keepSelection { selectedIndex = 0 }
     }
 }
