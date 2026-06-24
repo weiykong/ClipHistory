@@ -19,6 +19,7 @@ struct PopupView: View {
     @State private var cursorPhase   = false
     @State private var lastHoverPt: CGPoint? = nil
     @State private var hoverEnabled         = false
+    @State private var justOpened           = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -47,6 +48,7 @@ struct PopupView: View {
         .onChange(of: state.showToken) { _, _ in
             searchFocused = false
             cursorPhase   = false
+            justOpened    = true
             resetHoverState()
         }
         .onAppear { resetHoverState() }
@@ -200,8 +202,13 @@ struct PopupView: View {
                 }
                 .onChange(of: state.selectedIndex) { _, newIdx in
                     if let item = filtered[safe: newIdx] {
-                        withAnimation(.easeInOut(duration: 0.12)) {
+                        if justOpened {
                             proxy.scrollTo(item.id)
+                            justOpened = false
+                        } else {
+                            withAnimation(.easeInOut(duration: 0.12)) {
+                                proxy.scrollTo(item.id)
+                            }
                         }
                     }
                 }
