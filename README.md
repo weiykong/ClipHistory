@@ -56,9 +56,35 @@ If you want 200 features, use Raycast. If you want iCloud sync, use Paste. If yo
 
 ---
 
+## Status
+
+**Feature-complete — maintenance only.** The feature set shipped in v1.3.4 is the intended
+scope of this app; there is no roadmap. Ongoing work is limited to keeping it working on new
+macOS releases and fixing reported bugs. If you want a clipboard manager with more features,
+use Raycast or Paste — this one is deliberately small.
+
+Verified on macOS 26.6.2 (Swift 6.3.3): builds clean, and the APIs this app depends on —
+Accessibility trust, `CGEvent.tapCreate`/`tapEnable`, pasteboard `changeCount` polling,
+`org.nspasteboard.ConcealedType`, AES-256-GCM, Keychain — all behave as expected. See
+[docs/macos26-smoke-test.md](docs/macos26-smoke-test.md).
+
+---
+
 ## Install
 
-### Download (recommended)
+### Homebrew (tap)
+
+```bash
+brew tap weiykong/tap
+brew install --cask cliphistory
+```
+
+The app is ad-hoc signed (no Apple Developer ID), so Gatekeeper still asks for confirmation on
+first launch. That is also why it cannot live in the official `homebrew/cask` repo, which
+deprecates casks that fail Gatekeeper checks. The tap does not bypass Gatekeeper — it just makes
+the install command work.
+
+### Download (recommended if you don't use Homebrew)
 
 1. [**Download ClipHistory.dmg**](https://github.com/weiykong/ClipHistory/releases/latest/download/ClipHistory.dmg)
 2. Open the DMG and drag **ClipHistory.app** to `/Applications`
